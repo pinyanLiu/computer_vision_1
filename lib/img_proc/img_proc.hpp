@@ -7,7 +7,11 @@
 #include <vector>
 #define width 512
 #define height 512
-class img_proc
+#define BLUE 0
+#define GREEN 1
+#define RED 2
+
+class IMG_PROC
 {
 private:
     /* data */
@@ -17,10 +21,23 @@ private:
     unsigned char fout[width][height];
 
 public:
+    IMG_PROC(char *path);
+    ~IMG_PROC();
+
+    typedef struct
+    {
+        unsigned char *b;
+        unsigned char *g;
+        unsigned char *r;
+    } PIXEL;
+    PIXEL **pixel;
     FILE *fpin;
     FILE *fpout;
-    img_proc(char *path);
-    ~img_proc();
+    FILE *red;
+    FILE *green;
+    FILE *blue;
+    unsigned char header[54];
     void read_img(FILE *input, FILE *output);
+    void channel_separation(FILE *input, int mode);
 };
 #endif
