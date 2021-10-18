@@ -31,14 +31,15 @@ public:
         unsigned char r;
     } PIXEL;
     PIXEL **pixel;
-    PIXEL **pic;
     FILE *fpin;
     FILE *fpout;
     FILE *red;
     FILE *green;
     FILE *blue;
+    FILE *rotate;
     unsigned char header[54];
     void read_img(FILE *input, FILE *output);
     void channel_separation(FILE *input, int mode);
+    void clock_wise_rotation(FILE *input);
 };
 #endif

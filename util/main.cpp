@@ -1,16 +1,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <iostream>
 #include <math.h>
 #include <opencv4/opencv2/opencv.hpp>
 #include <opencv4/opencv2/highgui/highgui.hpp>
 #define _CRT_SECURE_NO_DEPRECATE
 using namespace cv;
-
-int main()
+using namespace std;
+int main(int argc, char *argv[])
 {
-
-    Mat src_Img = imread("../../HW1/InputImage.bmp");
+    if (argc < 2)
+    {
+        cout << "please enter the path of picture " << endl;
+        return 0;
+    }
+    Mat src_Img = imread(argv[1]);
     Mat rotate_Img;
     Mat red_Img = src_Img.clone();
     Mat green_Img = src_Img.clone();

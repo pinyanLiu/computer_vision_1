@@ -9,10 +9,10 @@ int main(int argc, char *argv[])
         return 0;
     }
     IMG_PROC img(argv[1]);
-    //img.read_img(img.fpin, img.fpout);
-    //printf("heehee");
+    img.read_img(img.fpin, img.fpout);
     img.channel_separation(img.fpin, RED);
     img.channel_separation(img.fpin, GREEN);
     img.channel_separation(img.fpin, BLUE);
+    img.clock_wise_rotation(img.fpin);
     return 0;
 }

@@ -32,6 +32,12 @@ IMG_PROC::IMG_PROC(char *path)
         printf("\7\n Cannot Open file: %s \n", "blue.bmp");
         exit(1);
     }
+    rotate = fopen("rotate.bmp", "wb");
+    if (NULL == rotate)
+    {
+        printf("\7\n Cannot Open file: %s \n", "rotate.bmp");
+        exit(1);
+    }
 }
 
 IMG_PROC::~IMG_PROC()
@@ -41,6 +47,7 @@ IMG_PROC::~IMG_PROC()
     fclose(red);
     fclose(green);
     fclose(blue);
+    fclose(rotate);
 }
 
 void IMG_PROC::read_img(FILE *input, FILE *output)
@@ -53,6 +60,7 @@ void IMG_PROC::read_img(FILE *input, FILE *output)
     {
         fwrite(buffer, sizeof(unsigned char), length, output);
     }
+    fseek(input, 0, SEEK_SET);
 
     free(buffer);
 }
@@ -120,6 +128,33 @@ void IMG_PROC::channel_separation(FILE *input, int mode)
             }
         }
     }
-    fseek(fpin, 0, SEEK_SET);
+    fseek(input, 0, SEEK_SET);
+    free(pixel);
+}
+void IMG_PROC::clock_wise_rotation(FILE *input)
+{
+    pixel = (PIXEL **)malloc(sizeof(PIXEL *) * height);
+    for (size_t i = 0; i < height; i++)
+    {
+        *(pixel + i) = (PIXEL *)malloc(sizeof(PIXEL) * width);
+    }
+
+    fread(header, sizeof(unsigned char), 54, input);
+    for (size_t i = 0; i < width; i++)
+    {
+        for (size_t j = 0; j < height; j++)
+        {
+            fread(&pixel[i][j], sizeof(PIXEL), 1, input);
+        }
+    }
+    fwrite(header, sizeof(unsigned char), 54, rotate);
+    for (size_t j = width - 1; j != 0; j--)
+    {
+        for (size_t i = 0; i < height; i++)
+        {
+            fwrite(&pixel[i][j], sizeof(PIXEL), 1, rotate);
+        }
+    }
+    fseek(input, 0, SEEK_SET);
     free(pixel);
 }
