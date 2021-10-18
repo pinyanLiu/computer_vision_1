@@ -65,12 +65,15 @@ void IMG_PROC::channel_separation(FILE *input, int mode)
     {
         *(pixel + i) = (PIXEL *)malloc(sizeof(PIXEL) * width);
     }
+
     fread(header, sizeof(unsigned char), 54, input);
     for (size_t i = 0; i < width; i++)
     {
         for (size_t j = 0; j < height; j++)
         {
-            fread(*(pixel + i) + j, sizeof(PIXEL), 1, input);
+            fread(&pixel[i][j].b, 1, 1, input);
+            fread(&pixel[i][j].g, 1, 1, input);
+            fread(&pixel[i][j].r, 1, 1, input);
         }
     }
 
@@ -82,6 +85,8 @@ void IMG_PROC::channel_separation(FILE *input, int mode)
         {
             for (size_t j = 0; j < height; j++)
             {
+                pixel[i][j].g = 0;
+                pixel[i][j].r = 0;
                 fwrite(*(pixel + i) + j, sizeof(PIXEL), 1, blue);
             }
         }
@@ -115,6 +120,6 @@ void IMG_PROC::channel_separation(FILE *input, int mode)
             }
         }
     }
-
+    fseek(fpin, 0, SEEK_SET);
     free(pixel);
 }

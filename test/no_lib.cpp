@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
     IMG_PROC img(argv[1]);
     //img.read_img(img.fpin, img.fpout);
     //printf("heehee");
-    //img.channel_separation(img.fpin, RED);
-    //img.channel_separation(img.fpin, GREEN);
+    img.channel_separation(img.fpin, RED);
+    img.channel_separation(img.fpin, GREEN);
     img.channel_separation(img.fpin, BLUE);
     return 0;
 }

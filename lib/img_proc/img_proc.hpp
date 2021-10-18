@@ -26,11 +26,12 @@ public:
 
     typedef struct
     {
-        unsigned char *b;
-        unsigned char *g;
-        unsigned char *r;
+        unsigned char b;
+        unsigned char g;
+        unsigned char r;
     } PIXEL;
     PIXEL **pixel;
+    PIXEL **pic;
     FILE *fpin;
     FILE *fpout;
     FILE *red;
