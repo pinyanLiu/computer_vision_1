@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
     resize(double_Img, double_Img, Size(src_Img.cols * 2, src_Img.rows * 2));
     resize(half_Img, half_Img, Size(src_Img.cols * 0.5, src_Img.rows * 0.5));
     //show result
+
     imshow("src_Img", src_Img);
     imshow("rotate_Img", rotate_Img);
     imshow("red_Img", red_Img);
@@ -49,6 +50,14 @@ int main(int argc, char *argv[])
     imshow("double_Img", double_Img);
     imshow("half_Img", half_Img);
     waitKey(0);
+
+    imwrite("src_Img.bmp", src_Img);
+    imwrite("rotate_Img.bmp", rotate_Img);
+    imwrite("red_Img.bmp", red_Img);
+    imwrite("green_Img.bmp", green_Img);
+    imwrite("blue_Img.bmp", blue_Img);
+    imwrite("double_Img.bmp", double_Img);
+    imwrite("half_Img.bmp", half_Img);
 
     return 0;
 }
