@@ -36,7 +36,7 @@ for example
 # program describe
 ### with opencv
 1. `which is processing in build/util/with_lib`   
-2. `using opencv functions like `imread` `imwrite` `rotate` `resize` to easily make changes to pictures.`     
+2. `using opencv functions like imread() imwrite() rotate() resize() to easily make changes to pictures.`     
 3. `Mat is a convenient type to read rgb data ,so getting r,g,b pic respectively,just set the other two channel to 0.`     
 
 ### without opencv
