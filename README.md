@@ -18,6 +18,7 @@ Please make sure to make install the opencv library
     $ git clone https://github.com/pinyanLiu/computer_vision_1
     $ cd computer_vision_1/
     $ mkdir build
+    $ cd build
     $ cmake ..
     $ make
 
