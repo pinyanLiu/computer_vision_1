@@ -34,7 +34,23 @@ for example
 for example   
 `./build/test/no_lib  ../../HW1/InputImage`  
 
-# program describe
+# Second homework
+## program describe
+### with opencv
+1. `which is processing in build/util/with_lib`   
+2. `using opencv functions such as cvtcolor(),threshold(),dilate(),erode(),connectedComponentsWithStats()`      
+
+### without opencv
+1. `which is processing in build/test/no_lib`   
+2. `My binarizing method is different from the general one ,cause i didn't write the gray_scale function,so it may only usable in this case.`     
+3. `I use while loop check every pixel from top-left to bot-right,and then do it again in the inverse direction utill no changes happended.`  
+4. `I spend to much time on debuging the connectedcomponent part,so I didn't finish the remain part.`   
+   
+
+
+
+# First homework
+## program describe
 ### with opencv
 1. `which is processing in build/util/with_lib`   
 2. `using opencv functions like imread() imwrite() rotate() resize() to easily make changes to pictures.`     

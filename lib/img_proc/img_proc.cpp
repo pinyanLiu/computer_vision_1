@@ -14,42 +14,36 @@ IMG_PROC::IMG_PROC(char *path)
         printf("\7\n Cannot Open file: %s \n", "output.bmp");
         exit(1);
     }
-    green = fopen("green.bmp", "wb");
-    if (NULL == green)
+    binary = fopen("binary.bmp", "wb");
+    if (NULL == binary)
     {
-        printf("\7\n Cannot Open file: %s \n", "green.bmp");
+        printf("\7\n Cannot Open file: %s \n", "output.bmp");
         exit(1);
     }
-    red = fopen("red.bmp", "wb");
-    if (NULL == red)
+    cc = fopen("cc.bmp", "wb");
+    if (NULL == cc)
     {
-        printf("\7\n Cannot Open file: %s \n", "red.bmp");
+        printf("\7\n Cannot Open file: %s \n", "cc.bmp");
         exit(1);
     }
-    blue = fopen("blue.bmp", "wb");
-    if (NULL == blue)
+    pixel = (PIXEL **)malloc(sizeof(PIXEL *) * height);
+    for (size_t i = 0; i < height; i++)
     {
-        printf("\7\n Cannot Open file: %s \n", "blue.bmp");
-        exit(1);
+        *(pixel + i) = (PIXEL *)malloc(sizeof(PIXEL) * width);
     }
-    rotate = fopen("rotate.bmp", "wb");
-    if (NULL == rotate)
-    {
-        printf("\7\n Cannot Open file: %s \n", "rotate.bmp");
-        exit(1);
-    }
+    fread(header, sizeof(unsigned char), 54, fpin); // read header
 }
 
 IMG_PROC::~IMG_PROC()
 {
     fclose(fpin);
     fclose(fpout);
-    fclose(red);
-    fclose(green);
-    fclose(blue);
-    fclose(rotate);
-}
+    fclose(binary);
+    fclose(cc);
 
+    free(pixel);
+}
+/*
 void IMG_PROC::read_img(FILE *input, FILE *output)
 {
     fseek(input, 0, SEEK_END);
@@ -67,14 +61,6 @@ void IMG_PROC::read_img(FILE *input, FILE *output)
 
 void IMG_PROC::channel_separation(FILE *input, int mode)
 {
-
-    pixel = (PIXEL **)malloc(sizeof(PIXEL *) * height);
-    for (size_t i = 0; i < height; i++)
-    {
-        *(pixel + i) = (PIXEL *)malloc(sizeof(PIXEL) * width);
-    }
-
-    fread(header, sizeof(unsigned char), 54, input);
     for (size_t i = 0; i < width; i++)
     {
         for (size_t j = 0; j < height; j++)
@@ -129,25 +115,9 @@ void IMG_PROC::channel_separation(FILE *input, int mode)
         }
     }
     fseek(input, 0, SEEK_SET);
-    free(pixel);
 }
 void IMG_PROC::clock_wise_rotation(FILE *input)
 {
-    pixel = (PIXEL **)malloc(sizeof(PIXEL *) * height);
-    for (size_t i = 0; i < height; i++)
-    {
-        *(pixel + i) = (PIXEL *)malloc(sizeof(PIXEL) * width);
-    }
-
-    fread(header, sizeof(unsigned char), 54, input);
-    for (size_t i = 0; i < width; i++)
-    {
-        for (size_t j = 0; j < height; j++)
-        {
-            fread(&pixel[i][j], sizeof(PIXEL), 1, input);
-        }
-    }
-    fwrite(header, sizeof(unsigned char), 54, rotate);
     for (size_t j = width - 1; j != 0; j--)
     {
         for (size_t i = 0; i < height; i++)
@@ -156,5 +126,310 @@ void IMG_PROC::clock_wise_rotation(FILE *input)
         }
     }
     fseek(input, 0, SEEK_SET);
-    free(pixel);
+}
+*/
+void IMG_PROC::binarize(FILE *input, FILE *output)
+{
+    // read input
+    // fseek(input, 53, SEEK_SET);
+    for (size_t i = 0; i < width; i++)
+    {
+        for (size_t j = 0; j < height; j++)
+        {
+            fread(&pixel[i][j].b, 1, 1, input);
+            fread(&pixel[i][j].g, 1, 1, input);
+            fread(&pixel[i][j].r, 1, 1, input);
+        }
+    }
+    // binarize
+    for (size_t i = 0; i < width; i++)
+    {
+        for (size_t j = 0; j < height; j++)
+        {
+            // turn white background to black
+            if ((pixel[i][j].r + pixel[i][j].g + pixel[i][j].b) < (240 * 3))
+            {
+                pixel[i][j].r = 255;
+                pixel[i][j].g = 255;
+                pixel[i][j].b = 255;
+            }
+            // turn target place to white
+            else
+            {
+                pixel[i][j].r = 0;
+                pixel[i][j].g = 0;
+                pixel[i][j].b = 0;
+            }
+        }
+    }
+
+    // output
+    fwrite(header, sizeof(unsigned char), 54, output);
+    for (size_t i = 0; i < width; i++)
+    {
+        for (size_t j = 0; j < height; j++)
+        {
+            fwrite(*(pixel + i) + j, 3 * sizeof(unsigned char), 1, output);
+        }
+    }
+}
+int IMG_PROC::connectedcomponent(FILE *input, FILE *output)
+{
+    int label = 0;
+    bool done = false;
+    fseek(input, 54, SEEK_SET);
+    for (size_t i = 0; i < width; i++)
+    {
+        for (size_t j = 0; j < height; j++)
+        {
+            fread(&pixel[i][j].b, 1, 1, input);
+            fread(&pixel[i][j].g, 1, 1, input);
+            fread(&pixel[i][j].r, 1, 1, input);
+        }
+    }
+
+    for (size_t i = 0; i < width; i++)
+    {
+        for (size_t j = 0; j < height; j++)
+        {
+            if (pixel[i][j].r == 255)
+            {
+                if (i == 0 && j == 0) // pixel on top left
+                {
+                    pixel[i][j].label = 1;
+                    label = 1;
+                    continue;
+                }
+                else if (i == 0) // pixel on left
+                {
+
+                    if (pixel[i][j - 1].r == 255 && pixel[i][j - 1].label != 0) // top neighbor has label
+                    {
+                        pixel[i][j].label = pixel[i][j - 1].label;
+                        continue;
+                    }
+                    else // no neighbor has label
+                    {
+                        label += 1;
+                        pixel[i][j].label = label;
+                        continue;
+                    }
+                }
+                else if (j == 0) // pixel on top
+                {
+
+                    if (pixel[i - 1][j].r == 255 && pixel[i - 1][j].label != 0) // left neighbor has label
+                    {
+                        pixel[i][j].label = pixel[i - 1][j].label;
+                        continue;
+                    }
+                    else // no neighbor has label
+                    {
+                        label += 1;
+                        pixel[i][j].label = label;
+                        continue;
+                    }
+                }
+                else // pixel in other place
+                {
+
+                    if ((pixel[i][j - 1].r == 255 && pixel[i - 1][j].r == 255) && (pixel[i][j - 1].label != 0 && pixel[i - 1][j].label != 0)) // left and top neighbor has label
+                    {
+                        if (pixel[i][j - 1].label < pixel[i - 1][j].label) // top label value smaller then left
+                        {
+                            pixel[i][j].label = pixel[i][j - 1].label;
+                            continue;
+                        }
+                        else
+                        {
+                            pixel[i][j].label = pixel[i - 1][j].label;
+                            continue;
+                        }
+                    }
+                    else if (pixel[i - 1][j].r == 255 && pixel[i - 1][j].label != 0) // left neighbor has label
+                    {
+                        pixel[i][j].label = pixel[i - 1][j].label;
+                        continue;
+                    }
+                    else if (pixel[i][j - 1].r == 255 && pixel[i][j - 1].label != 0) // top neighbor has label
+                    {
+                        pixel[i][j].label = pixel[i][j - 1].label;
+                        continue;
+                    }
+                    else // no neighbor has label
+                    {
+                        label += 1;
+                        pixel[i][j].label = label;
+                        continue;
+                    }
+                }
+            }
+            else
+            {
+                pixel[i][j].label = 0;
+            }
+        }
+    }
+    printf("label = %d\n", label);
+    int iterator = 0;
+    while (done == false)
+    {
+        iterator++;
+        done = true;
+        // inverse direction
+        for (size_t i = width - 1; i < -1; i--)
+        {
+            for (size_t j = height - 1; j < -1; j--)
+            {
+                if (pixel[i][j].label != 0)
+                {
+                    if (i == (width - 1) && j == (height - 1))
+                    {
+                        continue;
+                    }
+                    else if (i == (width - 1))
+                    {
+                        if (pixel[i][j + 1].label < pixel[i][j].label && pixel[i][j + 1].label != 0) // left neighbor has label
+                        {
+                            pixel[i][j].label = pixel[i][j + 1].label;
+                            done = false;
+                            continue;
+                        }
+                    }
+                    else if (j == (height - 1))
+                    {
+                        if (pixel[i + 1][j].label < pixel[i][j].label && pixel[i + 1][j].label != 0) // left neighbor has label
+                        {
+                            pixel[i][j].label = pixel[i + 1][j].label;
+                            done = false;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if ((pixel[i][j + 1].label < pixel[i][j].label || pixel[i + 1][j].label < pixel[i][j].label) && (pixel[i][j + 1].label != 0 && pixel[i + 1][j].label != 0)) // left and top neighbor has label
+                        {
+                            if (pixel[i][j + 1].label < pixel[i + 1][j].label) // top label value smaller then left
+                            {
+                                pixel[i][j].label = pixel[i][j + 1].label;
+                                done = false;
+                                continue;
+                            }
+                            else
+                            {
+                                pixel[i][j].label = pixel[i + 1][j].label;
+                                done = false;
+                                continue;
+                            }
+                        }
+                        else if (pixel[i + 1][j].label < pixel[i][j].label && pixel[i + 1][j].label != 0) // left neighbor has label
+                        {
+                            pixel[i][j].label = pixel[i + 1][j].label;
+                            done = false;
+                            continue;
+                        }
+                        else if (pixel[i][j + 1].label < pixel[i][j].label && pixel[i][j + 1].label != 0) // top neighbor has label
+                        {
+                            pixel[i][j].label = pixel[i][j + 1].label;
+                            done = false;
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+        if (done == true)
+        {
+            break;
+        }
+        done = true;
+        iterator++;
+        for (size_t i = 0; i < width; i++)
+        {
+            for (size_t j = 0; j < height; j++)
+            {
+                if (pixel[i][j].label != 0)
+                {
+                    if (i == 0 && j == 0)
+                    {
+                        continue;
+                    }
+                    else if (i == 0)
+                    {
+                        if (pixel[i][j - 1].label < pixel[i][j].label && pixel[i][j - 1].label != 0) // left neighbor has label
+                        {
+                            pixel[i][j].label = pixel[i][j - 1].label;
+                            done = false;
+                            continue;
+                        }
+                    }
+                    else if (j == 0)
+                    {
+                        if (pixel[i - 1][j].label < pixel[i][j].label && pixel[i - 1][j].label != 0) // left neighbor has label
+                        {
+                            pixel[i][j].label = pixel[i - 1][j].label;
+                            done = false;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        if ((pixel[i][j - 1].label < pixel[i][j].label || pixel[i - 1][j].label < pixel[i][j].label) && (pixel[i][j - 1].label != 0 && pixel[i - 1][j].label != 0)) // left and top neighbor has label
+                        {
+                            if (pixel[i][j - 1].label < pixel[i - 1][j].label) // top label value smaller then left
+                            {
+                                pixel[i][j].label = pixel[i][j - 1].label;
+                                done = false;
+                                continue;
+                            }
+                            else
+                            {
+                                pixel[i][j].label = pixel[i - 1][j].label;
+                                done = false;
+                                continue;
+                            }
+                        }
+                        else if (pixel[i - 1][j].label < pixel[i][j].label && pixel[i - 1][j].label != 0) // left neighbor has label
+                        {
+                            pixel[i][j].label = pixel[i - 1][j].label;
+                            done = false;
+                            continue;
+                        }
+                        else if (pixel[i][j - 1].label < pixel[i][j].label && pixel[i][j - 1].label != 0) // top neighbor has label
+                        {
+                            pixel[i][j].label = pixel[i][j - 1].label;
+                            done = false;
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    printf("iterator = %d\n", iterator);
+}
+void IMG_PROC::color(FILE *output)
+{
+    for (size_t i = 0; i < width; i++)
+    {
+        for (size_t j = 0; j < height; j++)
+        {
+
+            if (pixel[i][j].label != 0)
+            {
+                pixel[i][j].r = pixel[i][j].label * 12 % 256;
+                pixel[i][j].g = pixel[i][j].label * 25 % 256;
+                pixel[i][j].b = pixel[i][j].label * 37 % 256;
+            }
+        }
+    }
+    // output
+    fwrite(header, sizeof(unsigned char), 54, output);
+    for (size_t i = 0; i < width; i++)
+    {
+        for (size_t j = 0; j < height; j++)
+        {
+            fwrite(*(pixel + i) + j, 3 * sizeof(unsigned char), 1, output);
+        }
+    }
 }
