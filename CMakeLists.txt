@@ -35,6 +35,7 @@ set(DEPS_PATHS
 # Library paths
 set(LIB_PATHS
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/img_proc
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/img_warp
     )
 
 # Utility paths
