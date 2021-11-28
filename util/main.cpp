@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     cpu_time_used = (double)(end - start) / CLOCKS_PER_SEC;
     cout << "Property analysis time:" << cpu_time_used << endl;
 
-    //   waitKey(0);
+    waitKey(0);
 
     start = clock();
     imshow("binary_Img", binarize);
@@ -79,6 +79,6 @@ int main(int argc, char *argv[])
     end = clock();
     cpu_time_used = (double)(end - start) / CLOCKS_PER_SEC;
     cout << "drawing time:" << cpu_time_used << endl;
-    //   waitKey(0);
+    waitKey(0);
     return 0;
 }
