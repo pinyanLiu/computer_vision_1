@@ -1,9 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Set variables
-set(PROJECT_NAME cmake_test)
+set(PROJECT_NAME warping_test)
 set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_DEPS  img_proc img_warp 
+set(PROJECT_DEPS  img_proc img_warp
+${OpenCV_LIBS} 
 )
 
 # Compile setting

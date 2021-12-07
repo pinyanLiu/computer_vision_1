@@ -6,5 +6,5 @@ img_warp::img_warp(std::string path)
 
 int img_warp::imageToWorld(cv::Mat input)
 {
-    input.at<cv::Vec3b)(i,j)
+    //Sinput.at<cv::Vec3b>(i,j)
 }
