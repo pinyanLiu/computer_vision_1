@@ -4,7 +4,11 @@ cmake_minimum_required(VERSION 3.10)
 set(PROJECT_NAME warping_test)
 set(PROJECT_LANGUAGE C CXX)
 set(PROJECT_DEPS  img_proc img_warp
+<<<<<<< HEAD
 ${OpenCV_LIBS} 
+=======
+${OpenCV_LIBS}
+>>>>>>> 8a49e431b91dd8a4cec827e748c31ee890ffc2c4
 )
 
 # Compile setting

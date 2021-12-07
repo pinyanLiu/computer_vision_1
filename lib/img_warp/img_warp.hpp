@@ -1,5 +1,5 @@
-#ifndef IMG_WARP_HPP
-#define IMG_WARP_HPP
+#ifndef __IMG_WARP_HPP__
+#define __IMG_WARP_HPP__
 #include <opencv4/opencv2/opencv.hpp>
 #include <opencv4/opencv2/highgui/highgui.hpp>
 #include <iostream>
@@ -8,17 +8,32 @@
 #include <string.h>
 #include <vector>
 #include <cmath>
+#define PI 3.14159265
 
-class img_warp
+class IMG_WARP
 {
-public:
-    img_warp(std::string path);
-    ~img_warp();
-    int imageToWorld(cv::Mat input); //return m n
-    int worldToImage(cv::Mat input);
-
 private:
+    double cot(double num);
+    int alpha;
+    int dx;
+    int dy;
+    int dz;
+    int gama;
+    int theda;
+    int Horizon;
+
+public:
     cv::Mat source;
+    cv::Mat World;
+    cv::Mat Image;
+    IMG_WARP(std::string path);
+    ~IMG_WARP();
+    cv::Mat imageToWorld(); // return size
+    cv::Mat worldToImage();
+    int X(int u, int v, int m, int n);
+    int Y(int u, int v, int m, int n);
+    int U(int x, int y, int m, int n);
+    int V(int x, int y, int m, int n);
 };
 
 #endif
