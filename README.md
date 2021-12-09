@@ -25,17 +25,34 @@ Please make sure to make install the opencv library
 
 # execute method
 ### with opencv 
-`./build/util/with_lib *path to the sample picture InputImage*`  
+`./build/util/with_lib *1.path to roadmap.bmp 2. path to left.bmp 3. path to right.bmp*`  
 for example   
-`./build/util/with_lib ../../HW1/InputImage`  
+`./build/util/with_lib ../roadmap.bmp ../left.bmp ../right.bmp`  
 
 ### without opencv 
-`./build/test/no_lib  *path to the sample picture InputImage*`  
+`./build/test/no_lib  *path to road_map.bmp*`  
 for example   
-`./build/test/no_lib  ../../HW1/InputImage`  
+`./warpWithCpp road_map.bmp `  
 
- 
-# Second homework
+# Third homework describe
+## program describe
+### with opencv
+1. `which is processing in build/util/with_lib`   
+2. `which gives you four result 1.cannyBGR.bmp 2.bird.bmg 3.bird_crop.bmp 4.stitch.bmp locate at build/util`
+2. `use canny() to detect edge`
+3. `use HoughLinesP() to find line and colored with RGB`
+32. `use getPerspectiveTransform() to get the transform matrix`
+23. `use warpPerspective() to transform origin img to warping data`
+23. `create stitcher to stitch two picture`
+
+### without opencv
+1. `which is processing in build/test/warpWithCpp`
+2. `which gives you two result 1.World.bmp 2.Image.bmg locate at build/test`
+2. `lib is locate at lib/img_warp`
+1. `a very fatal mistake i made is that i set the initial variables with 'int' which makes the whole transform incorrect,they should be set as 'float' or 'double' . It cost me two days for this stupid bug  :(`
+23. `imageToWorld() using X() and Y() to transform each pixel,and then forward warp the origin img`
+23. `worldToImage() using U() and V() to transform each pixel,and then inverse warp the origin img `
+# Second homework describe
 ## program describe
 ### with opencv
 1. `which is processing in build/util/with_lib`   
