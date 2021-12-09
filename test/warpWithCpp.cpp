@@ -10,6 +10,5 @@ int main(int argc, char *argv[])
     process.Image = process.worldToImage();
     imwrite("World.bmp", process.World);
     imwrite("Image.bmp", process.Image);
-
     return 0;
 }
