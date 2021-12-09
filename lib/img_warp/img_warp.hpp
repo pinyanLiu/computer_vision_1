@@ -13,16 +13,16 @@
 class IMG_WARP
 {
 private:
-    double cot(double num);
-    int alpha;
-    int dx;
-    int dy;
-    int dz;
-    int gama;
-    int theda;
-    int Horizon;
+    float alpha;
+    float dx;
+    float dy;
+    float dz;
+    float gama;
+    float theta;
+    float Horizon;
 
 public:
+    double cot(double num);
     cv::Mat source;
     cv::Mat World;
     cv::Mat Image;
@@ -32,8 +32,8 @@ public:
     cv::Mat worldToImage();
     int X(int u, int v, int m, int n);
     int Y(int u, int v, int m, int n);
-    int U(int x, int y, int m, int n);
-    int V(int x, int y, int m, int n);
+    int U(int x, int y, int m);
+    int V(int x, int y, int n);
 };
 
 #endif
