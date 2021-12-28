@@ -23,7 +23,7 @@ Please make sure to make install the opencv library
     $ make
 
 
-# Execute method
+# Execute Method
 `./build/util/with_lib *path to video*`  
 for example
 
@@ -33,7 +33,7 @@ for example
 ### Program Describe
 
 1. `Which is processing in build/util/with_lib`   
-2. `Which gives you five result 1.30.png 2.60.png 3.90.png 4.120.png 5.150.png locate at build/util , these are the results per 30 frame`
+2. `Which gives you five result '30.png','60.png','90.png','120.png','150.png' locate at build/util , these are the results per 30 frame`
 3. `If you use other video , it can also be executed`
 2. `Capture frame per 30 frame and execute template matching`
 32. `Generate Templates by decompose it into 40*40 with frame 'preFrame' `

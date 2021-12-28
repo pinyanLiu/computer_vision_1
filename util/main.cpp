@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
         }
         if (currentFrame % 30 == 0) //do per 30 frame
         {
+            cout << "----------------------------------------------------------------" << endl;
             cout << "working on frame " << currentFrame << endl;
             composeFrame.setTo(0);
             preFrame = curFrame.clone();
@@ -92,8 +93,8 @@ int main(int argc, char *argv[])
             str << currentFrame << ".png";
             imwrite(str.str(), composeFrame);
             Template.clear();
-            imwrite("preFrame.png", preFrame);
-            imwrite("curFrame.png", curFrame);
+            // imwrite("preFrame.png", preFrame);
+            //imwrite("curFrame.png", curFrame);
         }
         //int c = waitKey(delay);
         currentFrame++;
