@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
     //double delay = rate / 1000;
     //for the while loop
     bool stop = false;
-    Mat frame, preFrame(WIDTH, HEIGHT, CV_8UC1), curFrame(WIDTH, HEIGHT, CV_8UC1), result(WIDTH, HEIGHT, CV_8UC1);
-    Mat composeFrame(1500, 1000, CV_8UC1), ROI;
+    Mat frame, preFrame(HEIGHT, WIDTH, CV_8UC1), curFrame(HEIGHT, WIDTH, CV_8UC1), result(HEIGHT, WIDTH, CV_8UC1);
+    Mat composeFrame(HEIGHT, WIDTH, CV_8UC1), ROI;
     long currentFrame = frameToStart;
     vector<Mat> Template;
     double minValue, maxValue;
@@ -67,9 +67,12 @@ int main(int argc, char *argv[])
         }
         if (currentFrame % 30 == 0) //do per 30 frame
         {
-
-            preFrame = curFrame;
+            cout << "working on frame " << currentFrame << endl;
+            composeFrame.setTo(0);
+            preFrame = curFrame.clone();
             cvtColor(frame, curFrame, CV_RGB2GRAY);
+            //get template from preFrame
+            cout << "Generating Templates ......" << endl;
             for (size_t x = 0; x < (WIDTH / 40); x++)
             {
                 for (size_t y = 0; y < (HEIGHT / 40); y++)
@@ -79,7 +82,9 @@ int main(int argc, char *argv[])
                     //imwrite(to_string(x) + "," + to_string(y) + ".png", Template.back());
                 }
             }
-
+            cout << "Generating Templates Done" << endl;
+            //do template matching with templates and current frame
+            cout << "Template Matching ......" << endl;
             for (size_t i = 0; i < Template.size(); i++)
             {
                 matchTemplate(curFrame, Template[i], result, TM_SQDIFF_NORMED);
@@ -87,13 +92,15 @@ int main(int argc, char *argv[])
                 minMaxLoc(result, &minValue, &maxValue, &minLocP, &maxLocP, Mat());
                 ROI = composeFrame(Rect(minLocP.x, minLocP.y, Template[i].cols, Template[i].rows));
                 addWeighted(ROI, 0.5, Template[i], 0.5, 0, ROI);
-                //cout << minLocP.x << "," << minLocP.y << endl;
             }
+            cout << "Template Matching Done" << endl;
 
-            cout << "working on frame " << currentFrame << endl;
             stringstream str;
             str << currentFrame << ".png";
             imwrite(str.str(), composeFrame);
+            Template.clear();
+            imwrite("preFrame.png", preFrame);
+            imwrite("curFrame.png", curFrame);
         }
         //int c = waitKey(delay);
         if (currentFrame > frameToStop)
