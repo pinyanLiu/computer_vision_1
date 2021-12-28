@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
             imwrite("curFrame.png", curFrame);
         }
         //int c = waitKey(delay);
-        if (currentFrame > frameToStop)
+        if (currentFrame >= frameToStop)
         {
             stop = true;
         }
