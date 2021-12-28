@@ -12,10 +12,10 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 
-    if (argc < 4)
+    if (argc < 2)
     {
-        cout << "please enter the 1.path of video 2.start frame 3.end frame" << endl;
-        cout << "for example: ./with_lib ../Video.avi 1 300" << endl;
+        cout << "please enter the path of video" << endl;
+        cout << "for example: ./with_lib ../Video.avi " << endl;
         return 0;
     }
     VideoCapture capture(argv[1]);
@@ -26,18 +26,11 @@ int main(int argc, char *argv[])
     cout << "total " << totalFrameNumber << " frames in this video" << endl;
 
     //set start frame
-    int frameToStart = atoi(argv[2]);
+    int frameToStart = 1;
     capture.set(CAP_PROP_POS_FRAMES, frameToStart);
     //set finish frame
-    int frameToStop = atoi(argv[3]);
-    if (frameToStop < frameToStart)
-    {
-        cout << "ERROR : frameToStop less than frameToStart" << endl;
-    }
-    else
-    {
-        cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
-    }
+    int frameToStop = totalFrameNumber;
+    cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
     // get FPS
     double rate = capture.get(CAP_PROP_FPS);
     cout << "FPS: " << rate << endl;
@@ -103,11 +96,11 @@ int main(int argc, char *argv[])
             imwrite("curFrame.png", curFrame);
         }
         //int c = waitKey(delay);
+        currentFrame++;
         if (currentFrame >= frameToStop)
         {
             stop = true;
         }
-        currentFrame++;
     }
 
     //close video

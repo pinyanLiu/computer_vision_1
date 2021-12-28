@@ -1,7 +1,7 @@
-# computer_vision_1
-homework 1 of computer vision
+# Computer_vision Homework
+homework  of computer vision
 
-# pre-setting up
+# Pre-setting Up
 ### Required Packages
 * cmake or ccmake 3.10
 * git
@@ -14,7 +14,7 @@ https://docs.opencv.org/4.4.0/d7/d9f/tutorial_linux_install.html
 Please make sure to make install the opencv library  
 
 
-# build method
+# Build Method
     $ git clone https://github.com/pinyanLiu/computer_vision_1
     $ cd computer_vision_1/
     $ mkdir build
@@ -23,17 +23,26 @@ Please make sure to make install the opencv library
     $ make
 
 
-# execute method
-### with opencv 
-`./build/util/with_lib *1.path to roadmap.bmp 2. path to left.bmp 3. path to right.bmp*`  
-for example   
-`./build/util/with_lib ../roadmap.bmp ../left.bmp ../right.bmp`  
+# Execute method
+`./build/util/with_lib *path to video*`  
+for example
 
-### without opencv 
-`./build/test/no_lib  *path to road_map.bmp*`  
-for example   
-`./warpWithCpp road_map.bmp `  
+` ./build/util/with_lib video.avi `  
+# Fourth Homework Describe
+## Template Matching
+### Program Describe
 
+1. `Which is processing in build/util/with_lib`   
+2. `Which gives you five result 1.30.png 2.60.png 3.90.png 4.120.png 5.150.png locate at build/util , these are the results per 30 frame`
+3. `If you use other video , it can also be executed`
+2. `Capture frame per 30 frame and execute template matching`
+32. `Generate Templates by decompose it into 40*40 with frame 'preFrame' `
+3. `Using template matching method 'cv.TM_SQDIFF_NORMED'`
+23. `Normalize the result between 0 ~ 255`
+23. `Use cv::minMaxLoc() to get the miniest value point(which is the best matching point)`
+23. `Paste the template on a new Mat on location we got from last step`
+23. `Redo until there's no new frame be captured`
+--- 
 # Third homework describe
 ## program describe
 ### with opencv
