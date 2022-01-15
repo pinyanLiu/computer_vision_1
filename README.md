@@ -1,15 +1,16 @@
 # computer_vision_1
-homework 1 of computer vision
+homework  of computer vision
 
 # pre-setting up
 ### Required Packages
 * cmake or ccmake 3.10
 * git
 * opencv 4.4.0   
+* opencv_contrib 4.4.0   
 
 `$ sudo apt install git `  
 `$ sudo apt install cmake `  
-method of building opencv in linux,please refer to the follow tutorial link:  
+method of building opencv and opencv_contrib in linux,please refer to the follow tutorial link:  
 https://docs.opencv.org/4.4.0/d7/d9f/tutorial_linux_install.html  
 Please make sure to make install the opencv library  
 

@@ -2,84 +2,255 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
-#include <math.h>
-#include <time.h>
-#include <opencv4/opencv2/opencv.hpp>
+#include <fstream>
+//#include <opencv4/opencv2/opencv.hpp>
 #include <opencv4/opencv2/highgui/highgui.hpp>
-#define _CRT_SECURE_NO_DEPRECATE
+//#include <opencv4/opencv2/imgproc/types_c.h>
+#include <opencv4/opencv2/tracking/tracker.hpp>
+#include <opencv4/opencv2/core/utility.hpp>
 using namespace cv;
 using namespace std;
+
 int main(int argc, char *argv[])
 {
-    if (argc < 4)
+
+    if (argc < 3)
     {
-        cout << "please enter the path of 1.road_map 2.left 3. right " << endl;
+        cout << "please enter the path of video" << endl;
+        cout << "and the level  " << endl;
+        cout << "for example: ./with_lib ../Video.avi 1" << endl;
         return 0;
     }
-    Mat src_Img, gray, canny, cannyBGR, bird, warpMatrix, bird_crop, left, left_gray, right_gray, right, right_warp, stitch;
-    src_Img = imread(argv[1]);
-    gray = imread(argv[1], COLOR_BGR2GRAY);
-    left = imread(argv[2]);
-    left_gray = imread(argv[2], COLOR_BGR2GRAY);
-    right = imread(argv[3]);
-    right_gray = imread(argv[3], COLOR_BGR2GRAY);
-    //exception
-    if (src_Img.empty() || gray.empty())
+    VideoCapture capture(argv[1]);
+    if (!capture.isOpened())
+        cout << "fail to open " << argv[1] << endl;
+    //count total frames
+    long totalFrameNumber = capture.get(CAP_PROP_FRAME_COUNT);
+    cout << "total " << totalFrameNumber << " frames in this video" << endl;
+
+    int frameToStart, frameToStop;
+    fstream fs;
+    vector<int> Frame;
+    vector<int> IDnumber;
+    vector<int> Xmin;
+    vector<int> Ymin;
+    vector<int> Width;
+    vector<int> Hight;
+    if (argv[2] == "1")
     {
-        printf(" Error opening image\n");
-        return -1;
+        //set start frame
+        frameToStart = 68;
+        capture.set(CAP_PROP_POS_FRAMES, frameToStart);
+        //set finish frame
+        frameToStop = 146;
+        cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
+
+        //read txt file
+        fs.open("Level.txt", ios::in);
+        if (!fs.is_open())
+        {
+            cout << "Failed to open file.\n";
+        }
+        else
+        {
+            int frame;
+            int iDnumber;
+            int xmin;
+            int ymin;
+            int width;
+            int hight;
+            while (fs >> frame >> iDnumber >> xmin >> ymin >> width >> hight)
+            {
+                Frame.push_back(frame);
+                IDnumber.push_back(iDnumber);
+                Xmin.push_back(xmin);
+                Ymin.push_back(ymin);
+                Width.push_back(width);
+                Hight.push_back(hight);
+            }
+        }
+        fs.close();
     }
-    Canny(gray, canny, 50, 200, 3);
-    cvtColor(canny, cannyBGR, COLOR_GRAY2BGR);
-    cannyBGR = src_Img.clone();
-    // Probabilistic Line Transform
-    vector<Vec4i> linesP;                                    // will hold the results of the detection
-    HoughLinesP(canny, linesP, 1, CV_PI / 180, 50, 280, 20); // runs the actual detection
-    // Draw the lines
-    for (size_t i = 3; i < 6; i++)
+    else if (argv[2] == "2")
     {
-        Vec4i l = linesP[i];
-        line(cannyBGR, Point(l[0], l[1]), Point(l[2], l[3]), Scalar(i == 3 ? 255 : 0, i == 5 ? 255 : 0, i == 4 ? 255 : 0), 13, LINE_AA);
+        //set start frame
+        frameToStart = 68;
+        capture.set(CAP_PROP_POS_FRAMES, frameToStart);
+        //set finish frame
+        frameToStop = 214;
+        cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
+    }
+    else if (argv[2] == "3")
+    {
+        //set start frame
+        frameToStart = 367;
+        capture.set(CAP_PROP_POS_FRAMES, frameToStart);
+        //set finish frame
+        frameToStop = 464;
+        cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
+    }
+    else if (argv[2] == "4")
+    {
+        //set start frame
+        frameToStart = 1;
+        capture.set(CAP_PROP_POS_FRAMES, frameToStart);
+        //set finish frame
+        frameToStop = 375;
+        cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
+    }
+    else if (argv[2] == "5")
+    {
+        //set start frame
+        frameToStart = 224;
+        capture.set(CAP_PROP_POS_FRAMES, frameToStart);
+        //set finish frame
+        frameToStop = 253;
+        cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
+    }
+    else if (argv[2] == "6")
+    {
+        //set start frame
+        frameToStart = 224;
+        capture.set(CAP_PROP_POS_FRAMES, frameToStart);
+        //set finish frame
+        frameToStop = 430;
+        cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
     }
 
-    imwrite("cannyBGR.bmp", cannyBGR);
-    //inverse warping
-    Point2f corners[4];
-    Point2f corners_trans[4];
-    Point2d p1(0, 360);
-    Point2d p2(src_Img.cols - 1, 360);
-    Point2d p3(0, src_Img.rows - 1);
-    Point2d p4(src_Img.cols - 1, src_Img.rows - 1);
-    corners[0] = p1;
-    corners[1] = p2;
-    corners[2] = p3;
-    corners[3] = p4;
-    bird = Mat::zeros(src_Img.rows, src_Img.cols, CV_8UC3);
-    corners_trans[2] = Point2f(0, 384);                //P1
-    corners_trans[0] = Point2f(src_Img.cols - 1, 110); //P2
-    corners_trans[3] = Point2f(0, 400);                //P3
-    corners_trans[1] = Point2f(src_Img.cols - 1, 682); //P4
-    warpMatrix = getPerspectiveTransform(corners, corners_trans);
-    warpPerspective(cannyBGR, bird, warpMatrix, src_Img.size());
-    imwrite("bird.bmp", bird);
-    //crop
-    Rect rect(0, 350, 110, 85);
-    bird_crop = bird(rect);
-    imwrite("bird_crop.bmp", bird_crop);
-    //bonus
-    stitch = Mat::zeros(480, 900, CV_8UC3);
-    corners_trans[0] = Point2f(130, 250); //P1
-    corners_trans[1] = Point2f(470, 310); //P2
-    corners_trans[2] = Point2f(475, 900); //P3
-    corners_trans[3] = Point2f(0, 770);   //P4
-    warpMatrix = getPerspectiveTransform(corners, corners_trans);
-    warpPerspective(right, right_warp, warpMatrix, stitch.size());
-    Stitcher::Mode mode = Stitcher::PANORAMA;
-    vector<Mat> imgs;
-    imgs.push_back(left);
-    imgs.push_back(right);
-    Ptr<Stitcher> stitcher = Stitcher::create(mode);
-    Stitcher::Status status = stitcher->stitch(imgs, stitch);
-    imwrite("stitch.bmp", stitch);
+    // get FPS
+    double rate = capture.get(CAP_PROP_FPS);
+    cout << "FPS: " << rate << endl;
+    //parameters for the while loop
+    bool stop = false;
+    Mat frame;
+    long currentFrame = 0;
+    double minValue, maxValue;
+    vector<string> str;
+    ofstream ofs;
+
+    Ptr<TrackerTLD> tldTracker = TrackerTLD::create();
+    Ptr<TrackerKCF> kcfTracker = TrackerKCF::create();
+    Ptr<TrackerCSRT> csrtTracker = TrackerCSRT::create();
+
+    //                             done pre setting                                //
+
+    while (!stop)
+    {
+        capture >> frame;
+        if (!capture.read(frame))
+        {
+            cout << "fail to read frame" << endl;
+            return -1;
+        }
+
+        //set tracker
+        if (currentFrame == frameToStart)
+        {
+            if (argv[2] == "1")
+            {
+                Rect2d Rect1(Xmin[0], Ymin[0], Width[0], Hight[0]);
+                csrtTracker->init(frame, Rect1);
+            }
+            // else if (argv[2] == "2")
+            // {
+            // }
+            // else if (argv[2] == "3")
+            // {
+            // }
+            // else if (argv[2] == "4")
+            // {
+            // }
+            // else if (argv[2] == "5")
+            // {
+            // }
+            // else if (argv[2] == "6")
+            // {
+            // }
+            // else if (argv[2] == "All")
+            // {
+            // }
+        }
+
+        //tracker update
+
+        if (argv[2] == "1")
+        {
+            csrtTracker->update(frame, Rect1);
+        }
+        // else if (argv[2] == "2")
+        // {
+        // }
+        // else if (argv[2] == "3")
+        // {
+        // }
+        // else if (argv[2] == "4")
+        // {
+        // }
+        // else if (argv[2] == "5")
+        // {
+        // }
+        // else if (argv[2] == "6")
+        // {
+        // }
+        // else if (argv[2] == "All")
+        // {
+        // }
+
+        //output
+        //stringstream str;
+        //str << currentFrame << ".jpg";
+        //imwrite(str.str(), composeFrame);
+
+        currentFrame++;
+        if (currentFrame >= frameToStop)
+        {
+            stop = true;
+        }
+    }
+
+    if (argv[2] == "1")
+    {
+        ofs.open("Tlevel1.txt");
+    }
+    // else if (argv[2] == "2")
+    // {
+    //ofs.open("Tlevel2.txt");
+
+    // }
+    // else if (argv[2] == "3")
+    // {
+    //ofs.open("Tlevel3.txt");
+
+    // }
+    // else if (argv[2] == "4")
+    // {
+    //ofs.open("Tlevel4.txt");
+
+    // }
+    // else if (argv[2] == "5")
+    // {
+    //ofs.open("Tlevel5.txt");
+
+    // }
+    // else if (argv[2] == "6")
+    // {
+    //ofs.open("Tlevel6.txt");
+
+    // }
+    if (!ofs.is_open())
+    {
+        cout << "Failed to open file.\n";
+    }
+    else
+    {
+        for (auto &s : str)
+        {
+            ofs << s;
+        }
+        ofs.close();
+    }
+    //close video
+    capture.release();
+
     return 0;
 }
