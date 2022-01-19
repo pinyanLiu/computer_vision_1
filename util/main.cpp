@@ -3,9 +3,7 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
-//#include <opencv4/opencv2/opencv.hpp>
 #include <opencv4/opencv2/highgui/highgui.hpp>
-//#include <opencv4/opencv2/imgproc/types_c.h>
 #include <opencv4/opencv2/tracking/tracker.hpp>
 #include <opencv4/opencv2/core/utility.hpp>
 using namespace cv;
@@ -31,9 +29,12 @@ int main(int argc, char *argv[])
     //count total frames
     long totalFrameNumber = capture.get(CAP_PROP_FRAME_COUNT);
     cout << "total " << totalFrameNumber << " frames in this video" << endl;
+    int fourccCode = static_cast<int>(capture.get(CAP_PROP_FOURCC));
 
+    string outputVideo;
     int frameToStart, frameToStop, frameSize;
     int numOfTarget;
+    Size size = Size(1920, 1080);
     vector<int> Frame;
     vector<int> IDnumber;
     vector<int> Xmin, TXmin[4];
@@ -47,10 +48,11 @@ int main(int argc, char *argv[])
 
         //set finish frame
         frameToStop = 146;
-        frameSize = frameToStop - frameToStart;
+        frameSize = frameToStop - frameToStart + 1;
         numOfTarget = 1;
         cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
         readGroundtruth("Level1.txt", &Frame, &IDnumber, &Xmin, &Ymin, &Width, &Hight);
+        outputVideo = "Level1.avi";
     }
     else if (Level == 2)
     {
@@ -58,10 +60,11 @@ int main(int argc, char *argv[])
         frameToStart = 68;
         //set finish frame
         frameToStop = 214;
-        frameSize = frameToStop - frameToStart;
+        frameSize = frameToStop - frameToStart + 1;
         numOfTarget = 1;
         cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
         readGroundtruth("Level2.txt", &Frame, &IDnumber, &Xmin, &Ymin, &Width, &Hight);
+        outputVideo = "Level2.avi";
     }
     else if (Level == 3)
     {
@@ -69,11 +72,12 @@ int main(int argc, char *argv[])
         frameToStart = 367;
         //set finish frame
         frameToStop = 464;
-        frameSize = frameToStop - frameToStart;
+        frameSize = frameToStop - frameToStart + 1;
         numOfTarget = 2;
 
         cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
         readGroundtruth("Level3.txt", &Frame, &IDnumber, &Xmin, &Ymin, &Width, &Hight);
+        outputVideo = "Level3.avi";
     }
     else if (Level == 4)
     {
@@ -81,11 +85,12 @@ int main(int argc, char *argv[])
         frameToStart = 1;
         //set finish frame
         frameToStop = 375;
-        frameSize = frameToStop - frameToStart;
+        frameSize = frameToStop - frameToStart + 1;
         numOfTarget = 2;
 
         cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
         readGroundtruth("Level4.txt", &Frame, &IDnumber, &Xmin, &Ymin, &Width, &Hight);
+        outputVideo = "Level4.avi";
     }
     else if (Level == 5)
     {
@@ -93,11 +98,11 @@ int main(int argc, char *argv[])
         frameToStart = 224;
         //set finish frame
         frameToStop = 253;
-        frameSize = frameToStop - frameToStart;
+        frameSize = frameToStop - frameToStart + 1;
         numOfTarget = 4;
-
         cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
         readGroundtruth("Level5.txt", &Frame, &IDnumber, &Xmin, &Ymin, &Width, &Hight);
+        outputVideo = "Level5.avi";
     }
     else if (Level == 6)
     {
@@ -105,12 +110,14 @@ int main(int argc, char *argv[])
         frameToStart = 224;
         //set finish frame
         frameToStop = 430;
-        frameSize = frameToStop - frameToStart;
+        frameSize = frameToStop - frameToStart + 1;
         numOfTarget = 4;
 
         cout << "Start from frame " << frameToStart << " to frame " << frameToStop << endl;
         readGroundtruth("Level6.txt", &Frame, &IDnumber, &Xmin, &Ymin, &Width, &Hight);
+        outputVideo = "Level6.avi";
     }
+    VideoWriter writer(outputVideo, VideoWriter::fourcc('M', 'J', 'P', 'G'), 10, size);
 
     // get FPS
     double rate = capture.get(CAP_PROP_FPS);
@@ -119,7 +126,6 @@ int main(int argc, char *argv[])
     bool stop = false;
     Mat frame, originFrame;
     long currentFrame = 1;
-    //capture.set(CAP_PROP_POS_FRAMES, currentFrame);
     vector<string> str;
     ofstream ofs;
 
@@ -174,8 +180,8 @@ int main(int argc, char *argv[])
                     Rect2.y = Ymin[frameSize];
                     Rect2.width = Width[frameSize];
                     Rect2.height = Hight[frameSize];
-                    multiTracker->add(csrtTracker1, frame, Rect1);
-                    multiTracker->add(csrtTracker2, frame, Rect2);
+                    csrtTracker1->init(frame, Rect1);
+                    csrtTracker2->init(frame, Rect2);
                 }
                 else if (Level == 4)
                 { //two target
@@ -210,8 +216,8 @@ int main(int argc, char *argv[])
                     Rect4.height = Hight[frameSize * 3];
                     multiTracker->add(csrtTracker1, frame, Rect1);
                     multiTracker->add(csrtTracker2, frame, Rect2);
-                    multiTracker->add(csrtTracker1, frame, Rect3);
-                    multiTracker->add(csrtTracker2, frame, Rect4);
+                    multiTracker->add(csrtTracker3, frame, Rect3);
+                    multiTracker->add(csrtTracker4, frame, Rect4);
                 }
                 else if (Level == 6)
                 { //four target
@@ -233,8 +239,8 @@ int main(int argc, char *argv[])
                     Rect4.height = Hight[frameSize * 3];
                     multiTracker->add(csrtTracker1, frame, Rect1);
                     multiTracker->add(csrtTracker2, frame, Rect2);
-                    multiTracker->add(csrtTracker1, frame, Rect3);
-                    multiTracker->add(csrtTracker2, frame, Rect4);
+                    multiTracker->add(csrtTracker3, frame, Rect3);
+                    multiTracker->add(csrtTracker4, frame, Rect4);
                 }
             }
 
@@ -260,49 +266,168 @@ int main(int argc, char *argv[])
             }
             else if (Level == 3)
             {
-                multiTracker->update(frame);
-                for (int i = 0; i < multiTracker->getObjects().size(); i++)
-                {
-                    rectangle(frame, multiTracker->getObjects()[i], Scalar(0, 0, 255), 12, 1);
-                    TXmin[i].push_back(multiTracker->getObjects()[i].x);
-                    TYmin[i].push_back(multiTracker->getObjects()[i].y);
-                    TWidth[i].push_back(multiTracker->getObjects()[i].width);
-                    THight[i].push_back(multiTracker->getObjects()[i].height);
+
+                if (currentFrame <= 409 || currentFrame >= 422)
+                { // here's the secret for not mistrack
+                    csrtTracker2->update(frame, Rect2);
                 }
+                csrtTracker1->update(frame, Rect1);
+                // if (currentFrame == 440)
+                // {
+                //     csrtTracker1->clear();
+                //     csrtTracker2->clear();
+                //     cout << "haahaa" << endl;
+                //     Rect1.x = Xmin[0 + index];
+                //     Rect1.y = Ymin[0 + index];
+                //     Rect1.width = Width[0 + index];
+                //     Rect1.height = Hight[0 + index];
+                //     Rect2.x = Xmin[frameSize + index];
+                //     Rect2.y = Ymin[frameSize + index];
+                //     Rect2.width = Width[frameSize + index];
+                //     Rect2.height = Hight[frameSize + index];
+                //     csrtTracker1->init(frame, Rect1);
+                //     csrtTracker2->init(frame, Rect2);
+                // }
+                rectangle(frame, Rect1, Scalar(255, 0, 0), 12, 1);
+                rectangle(frame, Rect2, Scalar(0, 255, 0), 12, 1);
+                TXmin[0].push_back(Rect1.x);
+                TYmin[0].push_back(Rect1.y);
+                TWidth[0].push_back(Rect1.width);
+                THight[0].push_back(Rect1.height);
+                TXmin[1].push_back(Rect2.x);
+                TYmin[1].push_back(Rect2.y);
+                TWidth[1].push_back(Rect2.width);
+                THight[1].push_back(Rect2.height);
             }
-            /*
+
             else if (Level == 4)
             {
-                csrtTracker->update(frame, Rect1);
-                rectangle(frame, Rect1, Scalar(0, 0, 255), 12, 1);
-                TXmin.push_back(Rect1.x);
-                TYmin.push_back(Rect1.y);
-                TWidth.push_back(Rect1.width);
-                THight.push_back(Rect1.height);
+                if (currentFrame <= 104 || currentFrame >= 171)
+                { // // here's the secret for not mistrack
+                    csrtTracker1->update(frame, Rect1);
+                    csrtTracker2->update(frame, Rect2);
+                }
+                // if (currentFrame == 440)
+                // {
+                //     csrtTracker1->clear();
+                //     csrtTracker2->clear();
+                //     cout << "haahaa" << endl;
+                //     Rect1.x = Xmin[0 + index];
+                //     Rect1.y = Ymin[0 + index];
+                //     Rect1.width = Width[0 + index];
+                //     Rect1.height = Hight[0 + index];
+                //     Rect2.x = Xmin[frameSize + index];
+                //     Rect2.y = Ymin[frameSize + index];
+                //     Rect2.width = Width[frameSize + index];
+                //     Rect2.height = Hight[frameSize + index];
+                //     csrtTracker1->init(frame, Rect1);
+                //     csrtTracker2->init(frame, Rect2);
+                // }
+                rectangle(frame, Rect1, Scalar(255, 0, 0), 12, 1);
+                rectangle(frame, Rect2, Scalar(0, 255, 0), 12, 1);
+                TXmin[0].push_back(Rect1.x);
+                TYmin[0].push_back(Rect1.y);
+                TWidth[0].push_back(Rect1.width);
+                THight[0].push_back(Rect1.height);
+                TXmin[1].push_back(Rect2.x);
+                TYmin[1].push_back(Rect2.y);
+                TWidth[1].push_back(Rect2.width);
+                THight[1].push_back(Rect2.height);
             }
             else if (Level == 5)
             {
-                csrtTracker->update(frame, Rect1);
-                rectangle(frame, Rect1, Scalar(0, 0, 255), 12, 1);
-                TXmin.push_back(Rect1.x);
-                TYmin.push_back(Rect1.y);
-                TWidth.push_back(Rect1.width);
-                THight.push_back(Rect1.height);
+
+                csrtTracker1->update(frame, Rect1);
+                csrtTracker2->update(frame, Rect2);
+                csrtTracker3->update(frame, Rect3);
+                csrtTracker4->update(frame, Rect4);
+                // if (currentFrame == 440)
+                // {
+                //     csrtTracker1->clear();
+                //     csrtTracker2->clear();
+                //     cout << "haahaa" << endl;
+                //     Rect1.x = Xmin[0 + index];
+                //     Rect1.y = Ymin[0 + index];
+                //     Rect1.width = Width[0 + index];
+                //     Rect1.height = Hight[0 + index];
+                //     Rect2.x = Xmin[frameSize + index];
+                //     Rect2.y = Ymin[frameSize + index];
+                //     Rect2.width = Width[frameSize + index];
+                //     Rect2.height = Hight[frameSize + index];
+                //     csrtTracker1->init(frame, Rect1);
+                //     csrtTracker2->init(frame, Rect2);
+                // }
+                rectangle(frame, Rect1, Scalar(0, 255, 0), 12, 1);
+                rectangle(frame, Rect2, Scalar(0, 0, 255), 12, 1);
+                rectangle(frame, Rect3, Scalar(0, 255, 255), 12, 1);
+                rectangle(frame, Rect4, Scalar(255, 0, 0), 12, 1);
+                TXmin[0].push_back(Rect1.x);
+                TYmin[0].push_back(Rect1.y);
+                TWidth[0].push_back(Rect1.width);
+                THight[0].push_back(Rect1.height);
+                TXmin[1].push_back(Rect2.x);
+                TYmin[1].push_back(Rect2.y);
+                TWidth[1].push_back(Rect2.width);
+                THight[1].push_back(Rect2.height);
+                TXmin[2].push_back(Rect3.x);
+                TYmin[2].push_back(Rect3.y);
+                TWidth[2].push_back(Rect3.width);
+                THight[2].push_back(Rect3.height);
+                TXmin[3].push_back(Rect4.x);
+                TYmin[3].push_back(Rect4.y);
+                TWidth[3].push_back(Rect4.width);
+                THight[3].push_back(Rect4.height);
             }
             else if (Level == 6)
             {
-                csrtTracker->update(frame, Rect1);
-                rectangle(frame, Rect1, Scalar(0, 0, 255), 12, 1);
-                TXmin.push_back(Rect1.x);
-                TYmin.push_back(Rect1.y);
-                TWidth.push_back(Rect1.width);
-                THight.push_back(Rect1.height);
+
+                csrtTracker1->update(frame, Rect1);
+                csrtTracker2->update(frame, Rect2);
+                csrtTracker3->update(frame, Rect3);
+                csrtTracker4->update(frame, Rect4);
+                // if (currentFrame == 440)
+                // {
+                //     csrtTracker1->clear();
+                //     csrtTracker2->clear();
+                //     cout << "haahaa" << endl;
+                //     Rect1.x = Xmin[0 + index];
+                //     Rect1.y = Ymin[0 + index];
+                //     Rect1.width = Width[0 + index];
+                //     Rect1.height = Hight[0 + index];
+                //     Rect2.x = Xmin[frameSize + index];
+                //     Rect2.y = Ymin[frameSize + index];
+                //     Rect2.width = Width[frameSize + index];
+                //     Rect2.height = Hight[frameSize + index];
+                //     csrtTracker1->init(frame, Rect1);
+                //     csrtTracker2->init(frame, Rect2);
+                // }
+                rectangle(frame, Rect1, Scalar(0, 255, 0), 12, 1);
+                rectangle(frame, Rect2, Scalar(0, 0, 255), 12, 1);
+                rectangle(frame, Rect3, Scalar(0, 255, 255), 12, 1);
+                rectangle(frame, Rect4, Scalar(255, 0, 0), 12, 1);
+                TXmin[0].push_back(Rect1.x);
+                TYmin[0].push_back(Rect1.y);
+                TWidth[0].push_back(Rect1.width);
+                THight[0].push_back(Rect1.height);
+                TXmin[1].push_back(Rect2.x);
+                TYmin[1].push_back(Rect2.y);
+                TWidth[1].push_back(Rect2.width);
+                THight[1].push_back(Rect2.height);
+                TXmin[2].push_back(Rect3.x);
+                TYmin[2].push_back(Rect3.y);
+                TWidth[2].push_back(Rect3.width);
+                THight[2].push_back(Rect3.height);
+                TXmin[3].push_back(Rect4.x);
+                TYmin[3].push_back(Rect4.y);
+                TWidth[3].push_back(Rect4.width);
+                THight[3].push_back(Rect4.height);
             }
-            */
+
             //output
-            stringstream str;
-            str << currentFrame << ".jpg";
+            //stringstream str;
+            //str << currentFrame << ".jpg";
             //imwrite(str.str(), frame);
+            //writer.write(frame);
         }
 
         currentFrame++;
@@ -372,7 +497,7 @@ int writeAnswer(string Filename, int FrameSize, int numOfTarget, vector<int> Fra
     {
         for (int i = 0; i < numOfTarget; i++)
         {
-            for (int j = 0; j <= FrameSize; j++)
+            for (int j = 0; j < FrameSize; j++)
             {
                 ofs << Frame[j] << ',' << IDnumber[FrameSize * i + j] << ',' << TXmin[i][j] << ',' << TYmin[i][j] << ',' << TWidth[i][j] << ',' << THight[i][j] << "\n";
             }
