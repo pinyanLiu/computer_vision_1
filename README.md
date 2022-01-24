@@ -39,6 +39,22 @@ for example
 3. `Use CSRT as the main tracker`
 32. `When the object been blocked by another object,especially Level3 and Level4,stop the upgrade of cv::Tracker`
 23. `restart upgrade after they have crossed by `
+---
+# Fourth Homework Describe
+## Template Matching
+### Program Describe
+
+1. `Which is processing in build/util/with_lib`   
+2. `Which gives you five result '30.png','60.png','90.png','120.png','150.png' locate at build/util , these are the results per 30 frame`
+3. `If you use other video , it can also be executed`
+2. `Capture frame per 30 frame and execute template matching`
+32. `Generate Templates by decompose it into 40*40 with frame 'preFrame' `
+3. `Using template matching method 'cv.TM_SQDIFF_NORMED'`
+23. `Normalize the result between 0 ~ 255`
+23. `Use cv::minMaxLoc() to get the miniest value point(which is the best matching point)`
+23. `Paste the template on a new Mat on location we got from last step`
+23. `Redo until there's no new frame be captured`
+--- 
 
 # Third homework describe
 ## program describe
