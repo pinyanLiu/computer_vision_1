@@ -1,4 +1,5 @@
 # Computer_vision Homework
+
 homework  of computer vision
 
 # Pre-setting Up
@@ -6,10 +7,11 @@ homework  of computer vision
 * cmake or ccmake 3.10
 * git
 * opencv 4.4.0   
+* opencv_contrib 4.4.0   
 
 `$ sudo apt install git `  
 `$ sudo apt install cmake `  
-method of building opencv in linux,please refer to the follow tutorial link:  
+method of building *opencv* and *opencv_contrib* in linux,please refer to the follow tutorial link:  
 https://docs.opencv.org/4.4.0/d7/d9f/tutorial_linux_install.html  
 Please make sure to make install the opencv library  
 
@@ -23,11 +25,22 @@ Please make sure to make install the opencv library
     $ make
 
 
-# Execute Method
-`./build/util/with_lib *path to video*`  
-for example
+# execute method
+### with opencv 
+`./build/util/with_lib 1.path to the video 2. level `
+for example   
+`./build/util/with_lib ./with_lib MOT17-09-SDP-raw.webm 5`    
 
-` ./build/util/with_lib video.avi `  
+# Final Project describe
+## program describe
+
+1. `which is processing in build/util/with_lib`   
+2. `which gives you 6 result : video of each level`
+2. `Use CV::Tracker for object tracking `
+3. `Use CSRT as the main tracker`
+32. `When the object been blocked by another object,especially Level3 and Level4,stop the upgrade of cv::Tracker`
+23. `restart upgrade after they have crossed by `
+---
 # Fourth Homework Describe
 ## Template Matching
 ### Program Describe
@@ -43,6 +56,7 @@ for example
 23. `Paste the template on a new Mat on location we got from last step`
 23. `Redo until there's no new frame be captured`
 --- 
+
 # Third homework describe
 ## program describe
 ### with opencv
