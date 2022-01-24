@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <iostream>
-
 #include <fstream>
 #include <time.h>
 #include <opencv4/opencv2/highgui/highgui.hpp>
@@ -277,22 +276,7 @@ int main(int argc, char *argv[])
                     csrtTracker2->update(frame, Rect2);
                 }
                 csrtTracker1->update(frame, Rect1);
-                // if (currentFrame == 440)
-                // {
-                //     csrtTracker1->clear();
-                //     csrtTracker2->clear();
-                //     cout << "haahaa" << endl;
-                //     Rect1.x = Xmin[0 + index];
-                //     Rect1.y = Ymin[0 + index];
-                //     Rect1.width = Width[0 + index];
-                //     Rect1.height = Hight[0 + index];
-                //     Rect2.x = Xmin[frameSize + index];
-                //     Rect2.y = Ymin[frameSize + index];
-                //     Rect2.width = Width[frameSize + index];
-                //     Rect2.height = Hight[frameSize + index];
-                //     csrtTracker1->init(frame, Rect1);
-                //     csrtTracker2->init(frame, Rect2);
-                // }
+
                 rectangle(frame, Rect1, Scalar(255, 0, 0), 12, 1);
                 rectangle(frame, Rect2, Scalar(0, 255, 0), 12, 1);
                 TXmin[0].push_back(Rect1.x);
@@ -312,22 +296,7 @@ int main(int argc, char *argv[])
                     csrtTracker1->update(frame, Rect1);
                     csrtTracker2->update(frame, Rect2);
                 }
-                // if (currentFrame == 440)
-                // {
-                //     csrtTracker1->clear();
-                //     csrtTracker2->clear();
-                //     cout << "haahaa" << endl;
-                //     Rect1.x = Xmin[0 + index];
-                //     Rect1.y = Ymin[0 + index];
-                //     Rect1.width = Width[0 + index];
-                //     Rect1.height = Hight[0 + index];
-                //     Rect2.x = Xmin[frameSize + index];
-                //     Rect2.y = Ymin[frameSize + index];
-                //     Rect2.width = Width[frameSize + index];
-                //     Rect2.height = Hight[frameSize + index];
-                //     csrtTracker1->init(frame, Rect1);
-                //     csrtTracker2->init(frame, Rect2);
-                // }
+
                 rectangle(frame, Rect1, Scalar(255, 0, 0), 12, 1);
                 rectangle(frame, Rect2, Scalar(0, 255, 0), 12, 1);
                 TXmin[0].push_back(Rect1.x);
@@ -345,22 +314,7 @@ int main(int argc, char *argv[])
                 csrtTracker2->update(frame, Rect2);
                 csrtTracker3->update(frame, Rect3);
                 csrtTracker4->update(frame, Rect4);
-                // if (currentFrame == 440)
-                // {
-                //     csrtTracker1->clear();
-                //     csrtTracker2->clear();
-                //     cout << "haahaa" << endl;
-                //     Rect1.x = Xmin[0 + index];
-                //     Rect1.y = Ymin[0 + index];
-                //     Rect1.width = Width[0 + index];
-                //     Rect1.height = Hight[0 + index];
-                //     Rect2.x = Xmin[frameSize + index];
-                //     Rect2.y = Ymin[frameSize + index];
-                //     Rect2.width = Width[frameSize + index];
-                //     Rect2.height = Hight[frameSize + index];
-                //     csrtTracker1->init(frame, Rect1);
-                //     csrtTracker2->init(frame, Rect2);
-                // }
+
                 rectangle(frame, Rect1, Scalar(0, 255, 0), 12, 1);
                 rectangle(frame, Rect2, Scalar(0, 0, 255), 12, 1);
                 rectangle(frame, Rect3, Scalar(0, 255, 255), 12, 1);
@@ -389,22 +343,7 @@ int main(int argc, char *argv[])
                 csrtTracker2->update(frame, Rect2);
                 csrtTracker3->update(frame, Rect3);
                 csrtTracker4->update(frame, Rect4);
-                // if (currentFrame == 440)
-                // {
-                //     csrtTracker1->clear();
-                //     csrtTracker2->clear();
-                //     cout << "haahaa" << endl;
-                //     Rect1.x = Xmin[0 + index];
-                //     Rect1.y = Ymin[0 + index];
-                //     Rect1.width = Width[0 + index];
-                //     Rect1.height = Hight[0 + index];
-                //     Rect2.x = Xmin[frameSize + index];
-                //     Rect2.y = Ymin[frameSize + index];
-                //     Rect2.width = Width[frameSize + index];
-                //     Rect2.height = Hight[frameSize + index];
-                //     csrtTracker1->init(frame, Rect1);
-                //     csrtTracker2->init(frame, Rect2);
-                // }
+
                 rectangle(frame, Rect1, Scalar(0, 255, 0), 12, 1);
                 rectangle(frame, Rect2, Scalar(0, 0, 255), 12, 1);
                 rectangle(frame, Rect3, Scalar(0, 255, 255), 12, 1);
@@ -427,11 +366,7 @@ int main(int argc, char *argv[])
                 THight[3].push_back(Rect4.height);
             }
 
-            //output
-            //stringstream str;
-            //str << currentFrame << ".jpg";
-            //imwrite(str.str(), frame);
-            //writer.write(frame);
+            writer.write(frame);
         }
 
         currentFrame++;
@@ -445,7 +380,7 @@ int main(int argc, char *argv[])
     cout << " time:" << cpu_time_used << endl;
     //output answer
     string Filename = "Tlevel" + to_string(Level) + ".txt";
-    // writeAnswer(Filename, frameSize, numOfTarget, Frame, IDnumber, TXmin, TYmin, TWidth, THight);
+    writeAnswer(Filename, frameSize, numOfTarget, Frame, IDnumber, TXmin, TYmin, TWidth, THight);
 
     //close video
     capture.release();

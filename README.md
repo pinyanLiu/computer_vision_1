@@ -35,7 +35,7 @@ for example
 ## program describe
 
 1. `which is processing in build/util/with_lib`   
-2. `which gives you 6 result : video of each level`
+2. `which gives you 6 pairs of result : video of each level and the answer txt of each level`
 2. `Use CV::Tracker for object tracking `
 3. `Use CSRT as the main tracker`
 32. `When the object been blocked by another object,especially Level3 and Level4,stop the upgrade of cv::Tracker`
