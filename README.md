@@ -10,7 +10,7 @@ homework  of computer vision
 
 `$ sudo apt install git `  
 `$ sudo apt install cmake `  
-method of building opencv and opencv_contrib in linux,please refer to the follow tutorial link:  
+method of building *opencv* and *opencv_contrib* in linux,please refer to the follow tutorial link:  
 https://docs.opencv.org/4.4.0/d7/d9f/tutorial_linux_install.html  
 Please make sure to make install the opencv library  
 
@@ -26,14 +26,19 @@ Please make sure to make install the opencv library
 
 # execute method
 ### with opencv 
-`./build/util/with_lib *1.path to roadmap.bmp 2. path to left.bmp 3. path to right.bmp*`  
+`./build/util/with_lib 1.path to the video 2. level `
 for example   
-`./build/util/with_lib ../roadmap.bmp ../left.bmp ../right.bmp`  
+`./build/util/with_lib ./with_lib MOT17-09-SDP-raw.webm 5`    
 
-### without opencv 
-`./build/test/no_lib  *path to road_map.bmp*`  
-for example   
-`./warpWithCpp road_map.bmp `  
+# Final Project describe
+## program describe
+
+1. `which is processing in build/util/with_lib`   
+2. `which gives you 6 result : video of each level`
+2. `Use CV::Tracker for object tracking `
+3. `Use CSRT as the main tracker`
+32. `When the object been blocked by another object,especially Level3 and Level4,stop the upgrade of cv::Tracker`
+23. `restart upgrade after they have crossed by `
 
 # Third homework describe
 ## program describe

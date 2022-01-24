@@ -3,6 +3,7 @@
 #include <string.h>
 #include <iostream>
 #include <fstream>
+#include <time.h>
 #include <opencv4/opencv2/highgui/highgui.hpp>
 #include <opencv4/opencv2/tracking/tracker.hpp>
 #include <opencv4/opencv2/core/utility.hpp>
@@ -14,7 +15,8 @@ int writeAnswer(string Filename, int FrameSize, int numOfTarget, vector<int> Fra
 
 int main(int argc, char *argv[])
 {
-
+    clock_t start, end;
+    double cpu_time_used;
     if (argc < 3)
     {
         cout << "please enter the path of video" << endl;
@@ -151,6 +153,7 @@ int main(int argc, char *argv[])
         //set tracker
         if (currentFrame >= frameToStart)
         {
+            start = clock();
             index++;
             if (currentFrame == frameToStart)
             {
@@ -436,9 +439,12 @@ int main(int argc, char *argv[])
             stop = true;
         }
     }
+    end = clock();
+    cpu_time_used = (double)(end - start) / CLOCKS_PER_SEC;
+    cout << " time:" << cpu_time_used << endl;
     //output answer
     string Filename = "Tlevel" + to_string(Level) + ".txt";
-    writeAnswer(Filename, frameSize, numOfTarget, Frame, IDnumber, TXmin, TYmin, TWidth, THight);
+    // writeAnswer(Filename, frameSize, numOfTarget, Frame, IDnumber, TXmin, TYmin, TWidth, THight);
 
     //close video
     capture.release();
